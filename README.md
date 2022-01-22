@@ -1,3 +1,3 @@
 # flutter_puzzle
 
-Flutter puzzle with elementary
+Flutter puzzle using elementary
