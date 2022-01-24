@@ -2,14 +2,14 @@ import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/ui/screen/puzzle_screen/puzzle_screen_widget_model.dart';
 
-class PuzzleScreen extends ElementaryWidget<IPuzzleWidgetModel> {
+class PuzzleScreen extends ElementaryWidget<IPuzzleScreenWidgetModel> {
   const PuzzleScreen({
     Key? key,
     WidgetModelFactory wmFactory = puzzleScreenWidgetModelFactory,
   }) : super(wmFactory, key: key);
 
   @override
-  Widget build(IPuzzleWidgetModel wm) {
+  Widget build(IPuzzleScreenWidgetModel wm) {
     return Scaffold(
       body: EntityStateNotifierBuilder<List<int>>(
         listenableEntityState: wm.puzzleState,
@@ -20,6 +20,7 @@ class PuzzleScreen extends ElementaryWidget<IPuzzleWidgetModel> {
               _NumberGrid(
                 numbers: numbers!,
                 swapWithZeroItem: (index) => wm.swapWithZeroItem(index),
+                numberStyle: wm.numberStyle,
               ),
               const SizedBox(
                 height: 30,
@@ -56,11 +57,13 @@ class _ReshuffleButton extends StatelessWidget {
 class _NumberGrid extends StatelessWidget {
   final List<int> numbers;
   final Function(int) swapWithZeroItem;
+  final TextStyle numberStyle;
 
   const _NumberGrid({
     Key? key,
     required this.numbers,
     required this.swapWithZeroItem,
+    required this.numberStyle,
   }) : super(key: key);
 
   @override
@@ -70,6 +73,8 @@ class _NumberGrid extends StatelessWidget {
           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
       itemCount: numbers.length,
       shrinkWrap: true,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(10),
       itemBuilder: (context, index) {
         final number = numbers[index];
         if (number == 0) {
@@ -77,7 +82,10 @@ class _NumberGrid extends StatelessWidget {
             onAccept: (int index) => swapWithZeroItem(index),
           );
         }
-        return _DefaultCard(number: number);
+        return _DefaultCard(
+          number: number,
+          numberStyle: numberStyle,
+        );
       },
     );
   }
@@ -85,15 +93,26 @@ class _NumberGrid extends StatelessWidget {
 
 class _DefaultCard extends StatelessWidget {
   final int number;
+  final TextStyle numberStyle;
 
-  const _DefaultCard({Key? key, required this.number}) : super(key: key);
+  const _DefaultCard({
+    Key? key,
+    required this.number,
+    required this.numberStyle,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Draggable<int>(
       data: number,
-      child: _NumberCard(number: number),
-      feedback: _DraggedNumberCard(number: number),
+      child: _NumberCard(
+        number: number,
+        numberStyle: numberStyle,
+      ),
+      feedback: _DraggingNumberCard(
+        number: number,
+        numberStyle: numberStyle,
+      ),
       childWhenDragging: const _EmptyCard(),
     );
   }
@@ -101,10 +120,12 @@ class _DefaultCard extends StatelessWidget {
 
 class _NumberCard extends StatelessWidget {
   final int number;
+  final TextStyle numberStyle;
 
   const _NumberCard({
     Key? key,
     required this.number,
+    required this.numberStyle,
   }) : super(key: key);
 
   @override
@@ -115,18 +136,21 @@ class _NumberCard extends StatelessWidget {
       child: Center(
         child: Text(
           number.toString(),
+          style: numberStyle,
         ),
       ),
     );
   }
 }
 
-class _DraggedNumberCard extends StatelessWidget {
+class _DraggingNumberCard extends StatelessWidget {
   final int number;
+  final TextStyle numberStyle;
 
-  const _DraggedNumberCard({
+  const _DraggingNumberCard({
     Key? key,
     required this.number,
+    required this.numberStyle,
   }) : super(key: key);
 
   @override
@@ -141,6 +165,7 @@ class _DraggedNumberCard extends StatelessWidget {
         child: Center(
           child: Text(
             number.toString(),
+            style: numberStyle,
           ),
         ),
       ),

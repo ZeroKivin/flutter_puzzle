@@ -7,20 +7,27 @@ import 'package:provider/provider.dart';
 
 PuzzleScreenWidgetModel puzzleScreenWidgetModelFactory(BuildContext context) {
   final model = context.read<PuzzleScreenModel>();
-  return PuzzleScreenWidgetModel(model);
+  final theme = context.read<ThemeWrapper>();
+  return PuzzleScreenWidgetModel(model, theme);
 }
 
 class PuzzleScreenWidgetModel
     extends WidgetModel<PuzzleScreen, PuzzleScreenModel>
-    implements IPuzzleWidgetModel {
+    implements IPuzzleScreenWidgetModel {
   final _puzzleState = EntityStateNotifier<List<int>>();
+  final ThemeWrapper _themeWrapper;
+  late final TextStyle _numberStyle;
 
   PuzzleScreenWidgetModel(
     PuzzleScreenModel model,
+    this._themeWrapper,
   ) : super(model);
 
   @override
   ListenableState<EntityState<List<int>>> get puzzleState => _puzzleState;
+
+  @override
+  TextStyle get numberStyle => _numberStyle;
 
   @override
   void swapWithZeroItem(int index) {
@@ -38,6 +45,10 @@ class PuzzleScreenWidgetModel
   void initWidgetModel() {
     super.initWidgetModel();
 
+    _numberStyle = _themeWrapper
+        .getTextTheme(context)
+        .headline4!
+        .copyWith(color: Colors.white);
     _loadNumbers();
   }
 
@@ -48,8 +59,10 @@ class PuzzleScreenWidgetModel
   }
 }
 
-abstract class IPuzzleWidgetModel extends IWidgetModel {
+abstract class IPuzzleScreenWidgetModel extends IWidgetModel {
   ListenableState<EntityState<List<int>>> get puzzleState;
+
+  TextStyle get numberStyle;
 
   void swapWithZeroItem(int index);
 
