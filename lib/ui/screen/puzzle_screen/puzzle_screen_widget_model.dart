@@ -1,5 +1,4 @@
 import 'package:elementary/elementary.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/ui/screen/puzzle_screen/puzzle_screen.dart';
 import 'package:flutter_puzzle/ui/screen/puzzle_screen/puzzle_screen_model.dart';

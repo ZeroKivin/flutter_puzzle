@@ -176,7 +176,10 @@ class _DraggingNumberCard extends StatelessWidget {
 class _ZeroCard extends StatelessWidget {
   final Function(int) onAccept;
 
-  const _ZeroCard({Key? key, required this.onAccept}) : super(key: key);
+  const _ZeroCard({
+    Key? key,
+    required this.onAccept,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
